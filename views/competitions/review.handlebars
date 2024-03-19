@@ -1,0 +1,67 @@
+
+<div class="overflow-x-auto">
+   
+   <style>
+
+h1 {
+    font-size: x-large ;
+    font-weight: bold ;
+}
+    body {
+        text-align: center;
+    }
+    
+th {
+    padding: 30px;
+}
+
+    .center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+h2 {
+    font-size: 14px;
+}
+
+tr:nth-of-type(4n) {
+    border-bottom:3px solid blue;
+}
+
+   </style>
+   
+   
+   <body>
+    
+        <h1> </h1>
+       
+         <table class="center">
+<tr>
+  
+        <th>IME I PREZIME</th>
+
+        <th>UKUPNI BROJ BODOVA</th>
+
+        </tr>
+
+        <tr>
+<h1>{{result.items.[0].competition}}</h1>
+            <h2>Datum natjecanja:  {{result.items.[0].apply_till}}
+                    </h2>
+            {{#each result.items}}
+
+
+             
+            <td>{{this.participant}}</td>
+       
+            
+            <td>{{this.points}}</td>
+
+            </tr>
+            {{/each}}
+            
+</table>
+    
+    </body>
+</div>
