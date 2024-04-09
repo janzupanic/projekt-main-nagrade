@@ -226,7 +226,7 @@ router.post("/points/:id", authRequired, function (req, res, next) {
     }
 
     const stmt = db.prepare("UPDATE participants SET points = ? WHERE id = ?;");
-    const updateResult = stmt.run(score, req.params.id); // Ovdje koristimo req.params.id
+    const updateResult = stmt.run(score, req.params.id); 
 
     if (updateResult.changes && updateResult.changes === 1) {
         res.redirect("/competitions");
