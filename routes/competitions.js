@@ -44,6 +44,31 @@ router.get("/delete/:id", adminRequired, function (req, res, next) {
     res.redirect("/competitions");
 });
 
+
+// GET /competitions/delete_prize/:id
+router.get("/delete_prize/:id", adminRequired, function (req, res, next) {
+    // do validation
+    const result = schema_id.validate(req.params);
+    if (result.error) {
+        throw new Error("Neispravan poziv");
+    }
+
+    const stmt = db.prepare("DELETE FROM prize WHERE competitions_id = ?;");
+    const deleteResult = stmt.run(req.params.id);
+
+
+    const stmt1 = db.prepare("DELETE FROM prize WHERE id = ?;");
+    const deleteResult1 = stmt1.run(req.params.id);
+
+    
+
+    res.redirect("/competitions/prize/1");
+});
+
+
+
+
+
 // GET /competitions/edit/:id
 router.get("/edit/:id", adminRequired, function (req, res, next) {
     // do validation
@@ -100,9 +125,74 @@ router.post("/edit", adminRequired, function (req, res, next) {
     }
 });
 
+
+
+
+
+// GET /competitions/edit_prize/:id
+
+router.get("/edit_prize/:id", adminRequired, function (req, res, next) {
+    // do validation
+    const result = schema_id.validate(req.params);
+    if (result.error) {
+        throw new Error("Neispravan poziv");
+    }
+
+    const stmt = db.prepare("SELECT * FROM prize WHERE id = ?;");
+    const selectResult = stmt.get(req.params.id);
+
+    if (!selectResult) {
+        throw new Error("Neispravan poziv");
+    }
+
+    res.render("competitions/prize_form", { result: { display_form: true, edit: selectResult } });
+});
+
+
+
+
+// POST /competitions/edit_prize/:id
+router.get("/edit_prize", adminRequired, function (req, res, next) {
+
+});
+
+
+
+// SCHEMA edit_prize
+const schema_edit_prize = Joi.object({
+    id: Joi.number().integer().positive().required(),
+    name: Joi.string().min(3).max(50).required(),
+    description: Joi.string().min(3).max(100).required(),
+    
+});
+
+
+// POST /competitions/edit_prize
+router.post("/edit_prize", adminRequired, function (req, res, next) {
+    // do validation
+    const result = schema_edit_prize.validate(req.body);
+    if (result.error) {
+        res.render("competitions/prize_form", { result: { validation_error: true, display_form: true } });
+        return;
+    }
+
+    const stmt = db.prepare("UPDATE prize SET name = ?, description = ? WHERE id = ?;");
+    const updateResult = stmt.run(req.body.name, req.body.description, req.body.id);
+
+    if (updateResult.changes && updateResult.changes === 1) {
+        res.redirect("/competitions/prize/1");
+    } else {
+        res.render("competitions/prize_form", { result: { database_error: true } });
+    }
+});
+
+
+
+
+
 // GET /competitions/add
 router.get("/add", adminRequired, function (req, res, next) {
-    res.render("competitions/form", { result: { display_form: true } });
+    res.render("competitions/prize", { result: { display_form: true } });
 });
 
 // SCHEMA add
@@ -117,7 +207,7 @@ router.post("/add", adminRequired, function (req, res, next) {
     // do validation
     const result = schema_add.validate(req.body);
     if (result.error) {
-        res.render("competitions/form", { result: { validation_error: true, display_form: true } });
+        res.render("competitions/prize", { result: { validation_error: true, display_form: true } });
         return;
     }
 
@@ -125,9 +215,9 @@ router.post("/add", adminRequired, function (req, res, next) {
     const insertResult = stmt.run(req.body.name, req.body.description, req.user.sub, req.body.apply_till);
 
     if (insertResult.changes && insertResult.changes === 1) {
-        res.render("competitions/form", { result: { success: true } });
+        res.render("competitions/prize", { result: { success: true } });
     } else {
-        res.render("competitions/form", { result: { database_error: true } });
+        res.render("competitions/prize", { result: { database_error: true } });
     }
    
 });
@@ -256,6 +346,46 @@ router.get("/review/:id", function (req, res, next) {
     res.render("competitions/review", { result: { items: dbResult, review:true } });
     
 });
+
+// GET /competitions/prize/:id
+router.get("/prize/:id",  function (req, res, next) {
+    const competitionId = req.params.id;
+
+
+    // Dohvat informacija o natjecanju
+    const stmtCompetition = db.prepare("SELECT * FROM competitions WHERE id = ?;");
+    const competition = stmtCompetition.get(competitionId);
+
+     if (!competition) {
+        res.render("error", { message: "Natjecanje nije pronađeno." });
+        return;
+    }
+
+    const stmtPrize = db.prepare("SELECT id, name, description FROM prize WHERE competitions_id = ?;");
+    const prizeResult = stmtPrize.all(competitionId);
+
+    res.render("competitions/prize", {
+        result: {
+            competition: competition,
+            prize: prizeResult
+        }
+    });
+});
+
+    // POST /competitions/prize/:id
+    router.post("/prize/:id", function (req, res, next) {
+        const competitionId = req.params.id;
+        const { name, description} = req.body;
+    
+        const stmt = db.prepare("INSERT INTO prize (competitions_id, name, description) VALUES (?, ?, ?);");
+        const insertResult = stmt.run(competitionId, name, description);
+    
+        if (insertResult.changes && insertResult.changes === 1) {
+            res.redirect("/competitions/prize/" + competitionId);
+        } else {
+            res.render("error", { message: "Greška u dodavanju." });
+        }
+    });
 
 
 module.exports = router;

@@ -1,0 +1,78 @@
+
+<style>
+
+
+    tr:nth-of-type(n) {
+    border-bottom:2px solid rgb(121, 121, 129);
+    border:3px solid rgb(83, 83, 84);
+}
+
+
+th {
+    border:5px solid rgb(121, 121, 129);
+   color: gray;
+   font-size:large
+}
+
+td {
+     border-right:2px solid rgb(83, 83, 84);
+  
+}
+</style>
+
+
+
+
+<div class="overflow-x-auto">
+    <table class="table">
+      
+        <thead>
+            <tr>
+                <th>Mjesto</th>
+                <th>Naziv nagrade</th>
+                <th>Opis nagrade</th>
+               
+            </tr>
+        </thead>
+        
+        <tbody>
+            {{#each result.prize}}
+            <tr>
+                <td>{{this.id}}</td>
+                <td>{{this.name}}</td>
+                <td>{{this.description}}
+                     {{#if ../user.is_admin }}
+                        <a href="/competitions/edit_prize/{{this.id}}" class="btn btn-accent btn-xs">Uredi</a>
+                        <a href="/competitions/delete_prize/{{this.id}}" class="btn btn-error btn-xs">Briši</a>
+                       
+                    {{/if}}
+                </td>
+                
+            </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
+
+<br><br><br><br><br>
+ {{#if user.is_admin }}
+
+<form action="/competitions/prize/{{result.competition.id}}" method="POST" class="max-w-md mx-auto bg-gray-800 p-8 rounded-lg shadow-lg">
+    
+    <div class="mb-4">
+        <label for="name" class="block text-sm font-bold text-gray-300">Naziv:</label>
+        <input type="text" id="name" name="name" class="form-input mt-1 block w-full bg-gray-900" required>
+    </div>
+
+    <div class="mb-4">
+        <label for="description" class="block text-sm font-semibold">Opis:</label>
+        <textarea id="description" name="description" rows="4" cols="50" class="form-textarea mt-1 block w-full bg-gray-700" required></textarea>
+    </div>
+    
+    <div class="text-center">
+        <input type="submit" class="btn btn-success" value="Dodaj nagradu">
+    </div>
+
+</form>
+
+{{/if}}
