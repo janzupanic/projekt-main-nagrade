@@ -2,7 +2,7 @@
 <style>
 
 
-    tr:nth-of-type(n) {
+tr:nth-of-type(n)  {
     border-bottom:2px solid rgb(121, 121, 129);
     border:3px solid rgb(83, 83, 84);
 }
@@ -15,7 +15,7 @@ th {
 }
 
 td {
-     border-right:2px solid rgb(83, 83, 84);
+     border-right:3px solid rgb(83, 83, 84);
   
 }
 </style>
@@ -38,7 +38,7 @@ td {
         <tbody>
             {{#each result.prize}}
             <tr>
-                <td>{{this.id}}</td>
+                <td>{{this.placement}}</td>
                 <td>{{this.name}}</td>
                 <td>{{this.description}}
                      {{#if ../user.is_admin }}
@@ -59,6 +59,13 @@ td {
 
 <form action="/competitions/prize/{{result.competition.id}}" method="POST" class="max-w-md mx-auto bg-gray-800 p-8 rounded-lg shadow-lg">
     
+     <div class="mb-4">
+        <label for="placement" class="block text-sm font-bold text-gray-300">Mjesto:</label>
+        <input type="text" id="placement" name="placement" class="form-input mt-1 block w-full bg-gray-900" required>
+    </div>
+
+
+
     <div class="mb-4">
         <label for="name" class="block text-sm font-bold text-gray-300">Naziv:</label>
         <input type="text" id="name" name="name" class="form-input mt-1 block w-full bg-gray-900" required>

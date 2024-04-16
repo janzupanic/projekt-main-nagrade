@@ -53,8 +53,6 @@ router.get("/delete_prize/:id", adminRequired, function (req, res, next) {
         throw new Error("Neispravan poziv");
     }
 
-    const stmt = db.prepare("DELETE FROM prize WHERE competitions_id = ?;");
-    const deleteResult = stmt.run(req.params.id);
 
 
     const stmt1 = db.prepare("DELETE FROM prize WHERE id = ?;");
@@ -161,6 +159,7 @@ router.get("/edit_prize", adminRequired, function (req, res, next) {
 // SCHEMA edit_prize
 const schema_edit_prize = Joi.object({
     id: Joi.number().integer().positive().required(),
+    placement: Joi.string().min(1).max(50).required(),
     name: Joi.string().min(3).max(50).required(),
     description: Joi.string().min(3).max(100).required(),
     
@@ -176,8 +175,8 @@ router.post("/edit_prize", adminRequired, function (req, res, next) {
         return;
     }
 
-    const stmt = db.prepare("UPDATE prize SET name = ?, description = ? WHERE id = ?;");
-    const updateResult = stmt.run(req.body.name, req.body.description, req.body.id);
+    const stmt = db.prepare("UPDATE prize SET placement = ?, name = ?, description = ? WHERE id = ?;");
+    const updateResult = stmt.run(req.body.placement, req.body.name, req.body.description, req.body.id);
 
     if (updateResult.changes && updateResult.changes === 1) {
         res.redirect("/competitions/prize/1");
@@ -352,7 +351,7 @@ router.get("/prize/:id",  function (req, res, next) {
     const competitionId = req.params.id;
 
 
-    // Dohvat informacija o natjecanju
+   
     const stmtCompetition = db.prepare("SELECT * FROM competitions WHERE id = ?;");
     const competition = stmtCompetition.get(competitionId);
 
@@ -361,7 +360,7 @@ router.get("/prize/:id",  function (req, res, next) {
         return;
     }
 
-    const stmtPrize = db.prepare("SELECT id, name, description FROM prize WHERE competitions_id = ?;");
+    const stmtPrize = db.prepare("SELECT id, placement, name, description FROM prize WHERE competitions_id = ?;");
     const prizeResult = stmtPrize.all(competitionId);
 
     res.render("competitions/prize", {
@@ -375,10 +374,10 @@ router.get("/prize/:id",  function (req, res, next) {
     // POST /competitions/prize/:id
     router.post("/prize/:id", function (req, res, next) {
         const competitionId = req.params.id;
-        const { name, description} = req.body;
+        const {placement, name, description} = req.body;
     
-        const stmt = db.prepare("INSERT INTO prize (competitions_id, name, description) VALUES (?, ?, ?);");
-        const insertResult = stmt.run(competitionId, name, description);
+        const stmt = db.prepare("INSERT INTO prize (competitions_id, placement, name, description) VALUES (?, ?, ?, ?);");
+        const insertResult = stmt.run(competitionId, placement, name, description);
     
         if (insertResult.changes && insertResult.changes === 1) {
             res.redirect("/competitions/prize/" + competitionId);
