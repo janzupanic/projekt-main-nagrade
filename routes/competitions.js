@@ -159,7 +159,7 @@ router.get("/edit_prize", adminRequired, function (req, res, next) {
 // SCHEMA edit_prize
 const schema_edit_prize = Joi.object({
     id: Joi.number().integer().positive().required(),
-    placement: Joi.string().min(1).max(50).required(),
+    placement: Joi.number().integer().min(1).max(50).required(),
     name: Joi.string().min(3).max(50).required(),
     description: Joi.string().min(3).max(100).required(),
     
