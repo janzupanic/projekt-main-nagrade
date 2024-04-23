@@ -43,7 +43,7 @@ h2 a {
 	  font-weight: bold;
 	  font-size: 1em;
   text-align: left;
-  color: #5eaed3;
+  color: #3ba36f;
 }
 
 .container td {
@@ -133,10 +133,13 @@ h2 a {
                 <td>{{this.placement}}</td>
                 <td>{{this.name}}</td>
                 <td>{{this.description}}
+
+
+                  <td class=" gap-2 ">
                      {{#if ../user.is_admin }}
                         <a href="/competitions/edit_prize/{{this.id}}" class="btn btn-accent btn-xs">Uredi</a>
                         <a href="/competitions/delete_prize/{{this.id}}" class="btn btn-error btn-xs">Briši</a>
-                       
+                       </td>
                     {{/if}}
                 </td>
                 
@@ -146,7 +149,7 @@ h2 a {
     </table>
 </div>
 
-<br><br><br><br><br>
+<br><br><br>
  {{#if user.is_admin }}
 
 <form action="/competitions/prize/{{result.competition.id}}" method="POST" class="max-w-md mx-auto bg-gray-800 p-8 rounded-lg shadow-lg">

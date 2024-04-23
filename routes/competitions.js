@@ -191,7 +191,7 @@ router.post("/edit_prize", adminRequired, function (req, res, next) {
 
 // GET /competitions/add
 router.get("/add", adminRequired, function (req, res, next) {
-    res.render("competitions/prize", { result: { display_form: true } });
+    res.render("competitions/form", { result: { display_form: true } });
 });
 
 // SCHEMA add
@@ -206,7 +206,7 @@ router.post("/add", adminRequired, function (req, res, next) {
     // do validation
     const result = schema_add.validate(req.body);
     if (result.error) {
-        res.render("competitions/prize", { result: { validation_error: true, display_form: true } });
+        res.render("competitions/form", { result: { validation_error: true, display_form: true } });
         return;
     }
 
@@ -214,9 +214,9 @@ router.post("/add", adminRequired, function (req, res, next) {
     const insertResult = stmt.run(req.body.name, req.body.description, req.user.sub, req.body.apply_till);
 
     if (insertResult.changes && insertResult.changes === 1) {
-        res.render("competitions/prize", { result: { success: true } });
+        res.render("competitions/form", { result: { success: true } });
     } else {
-        res.render("competitions/prize", { result: { database_error: true } });
+        res.render("competitions/form", { result: { database_error: true } });
     }
    
 });
